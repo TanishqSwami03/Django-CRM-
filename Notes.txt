@@ -1,0 +1,91 @@
+Do the basic setup and create an app named website and add this app in the settings.py file.
+Then we will be using mysql in this project, so install mysql, connector and connector-python (which are used to connect).
+
+	pip install mysql
+	pip install mysql-connector
+	pip install mysql-connector-python
+
+This requires mysql to be downloaded on your computer.
+
+In the settings.py file, set the database as mysql.
+
+	DATABASES = {
+    	    'default': {
+        	'ENGINE': 'django.db.backends.mysql',
+        	'NAME': 'crm_project',
+        	'USER': 'root',
+        	'PASSWORD' : '@4521TRS',
+        	'HOST' : 'localhost',
+        	'PORT' : '3306',
+    		}
+	}
+Now we need to setup the database that we have just designated.
+So in the main project file, we can create a file named mydb.py ( there are other ways to do it also. ) 
+
+In the mydb.py file, firstly import the mysql connector as
+  
+        import mysql-connector
+
+then we need to create a database connection and for that we will create a variable called as dataBase and we will use connect function in in and inside of that, we will mention host, user and password ( as a convention passwd is used for password ).
+
+
+    dataBase = mysql.connector.connect(
+        host = 'localhost',
+        user = 'root',
+        passwd = '@4521TRS'
+    )
+
+So now, we wanna prepare a cursor object.
+
+---------------
+NOTE :- A cursor object allows python code to execute the sql commands in a database session. Actually cursor object is a pointer, it will point to the result. Firstly, we will connect our script to the database and then we will run the SQL query from the python script and the cursor object is responsible to make this SQL query run. Cursor object is an object of Cursor class.
+---------------
+
+For this we will create a variable named cursorObject and we will set that to dataBase.cursor()  (this dataBase is the variable that we have just created).
+
+     cursorObject = dataBase.cursor()
+
+We also now need to create the database. We can do that by just calling the cursorObject variable that we have just created. WE will use execute for that and in there we will write the SQL command that we write for creating a database (The name of the database will be the same as we have mentioned in the settings.py file).
+
+Now we can print a message for the terminal
+
+     print("All done !!")
+
+We only need this file right now one time just to setup this database. But if you know how to setup a database from the terminal, you can do that also or you can go to mysql workbench and do it from there. You can do it whatever way you like but this way is super easy.
+
+Now let's run this file from the terminal
+
+     python mydb.py
+
+And you can see the message that we have written in the file which means that the file has executed perfectly and you can confirm that our database has been created by browsing the mysql workbench.
+
+Now we can run the migrate command to confirm that we are ready to go (if that works fine).
+
+     python manage.py migrate
+
+The last thing we are gonna do in this section is create a superuser.
+
+     python manage.py createsuperuser
+
+ 
+
+username = admin
+password = admin
+
+Now we can run our server and see if it all works.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
