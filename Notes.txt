@@ -194,6 +194,7 @@ We need these fields (username and password) to be required, so we will just add
 So we have created this form but it doesn't do anything and we want to show only when the user is not logged in. So how do we determine if a user is logged in or not. For this, we will add this a tag an wrap this inside of that. So basically it will be like, if you are logged in, it will show a sample text ( for now ) and if you are not then it will show this form.
 
 Now if we go and reload in the browser, you will not see anything but if you go to the admin page, you login and then come back here again and you will see that there is no login form.
+<<<<<<< HEAD
 
 For now it just shows the form, doesn't do anything but we will fix this.
 
@@ -207,6 +208,8 @@ We have only two things to take which is username and the password. So to get th
 
 So now as we have their username and the password. After this, we will again do some login and check if the user who is trying to log in is real or not i.e, their username and password are correct or not.
 For this we will create a variable called user and in there, we will use the authenticate method and in that, we will pass the request, set the username to the username and the password to the password. 
+=======
+>>>>>>> df6d850ebfdbf10ad7cf0837f8ea99d75d24f0ed
 
 
 
