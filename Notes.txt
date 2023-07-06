@@ -67,23 +67,133 @@ The last thing we are gonna do in this section is create a superuser.
 
      python manage.py createsuperuser
 
- 
-
-username = admin
-password = admin
 
 Now we can run our server and see if it all works.
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Now create a new project in the github and add this project as remote ans commit all the changes.
 
+From the settings.py file in the github, we can see the database passwords. But it is ok untill and unless, you are professionally working on a project.
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+We can now delete the mydb.py file if we want, we don't need it anymore.
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+INITIAL APP BUILDING
 
+Now we will head on to building out our app.
 
+So firstly in the urls.py file of the main project, include the urls of the app (i.e, website)
 
+	path('', include('website.urls'))
 
+Until now, we don't have any urls file in our app. So we will create it and paste the basic structure.
+Now let's create a url for the homepage. 
+So anytime you wanna create a django webpage, there is always a three step process. You create the actual template file ( the html page ), you also create a url and you create a view.
+
+So let's create a url for the homepage.
+
+        path('', views.home, name='home'),
+
+We need to import the views file also to make it work.
+
+       from . import views
+
+Now let's head over to our views file and create a view for our homepage and for now, we are just rendering out the home.html file (we don't have it until now) and passing the empty context dictionary.
+
+      def home(request):
+            return render(request, 'home.html', {})
+
+Now we need to create this home.html file, so let's head over to our website directory and create a new folder named tempalates. Django knows to look for all our webpage files in the tempalates folder. In that folder, we will create a file called home.html.
+
+In there, we will write a sample text just to make sure it is working.
+So boom, now our webpage is working.
+
+Now let's setup the base.html file and a base.html file is the file that every webpage on your site will reference.
+
+So create a base.html in the templates folder and inside of this, we will put all the code that is gonna go on every page. So the code we are gonna use for our styling is something called bootstrap css framework. So we will go to the bootstrap website and take the template which contain both the css and js and just paste all of this in the base.html
+
+Let's change the title to Django CRM and in the body, we will remove the h1 tag and we will create a template for the content block. What this will do is, it will pull everything out of our webpage (in our case Hello World)
+So what django does internally is, it pulls everything out, put it in the content tag.
+So to give permission to the base.html file, we can extend the home.html with the base.html file.
+
+      {% extends 'base.html' %}
+ 
+And here we need to do one more thins which is wrapping all the content in the same block content tag, so that django can take it from here and put it inside of the content tag in the base.html file.
+
+We can also wrap the content tag in the base.html file with the div which has the class container. Now if we save this and go back to the browser, we can see that it shifted it a little bit inside. We can also add a line break tag just to create some space from the top.
+
+Now let's move on and create the navbar.
+Go to the templates directory and create a file named as navbar.html and we are gonna grab that from bootstrap because it is super easy and just paste that in.
+Now we need to add this to out base.html file, so we file go to that and just under the body we will use the django tag to add this and this time we will use the include tag and include the navbar.html
+
+     {% include 'navbar.html' %}
+
+Now the next thing is modifying this navbar.
+So in the navbar class, you can see the 'bg-body-tertiary', remove that and add 'navbar-dark bg-dark'. So this will change it from light to dark.
+
+Next we will modify the a tag, so we will change it to the DJANGO CRM which will point to the homepage
+
+Now we can remove the unwanted items from the navbar.
+
+Now we have got a homepage and a navbar, the next we will add the ability to register as new user, login and logout.
+
+So I think we will look out for logging in and logging out first and then we will do registration which a bit more complicated. Logging in and logging out is relatively simple because we will be using the django authentication system. This comes up with and it will do all of the heavy lifting for you. It will take care of logging people in, logging people out, keeping track of who is who and what is what and it is really easy to setup and use. So we are gonna use that now.
+
+----------------------------------------------------------------------------------------------------------------------------------
+
+DJANGO LOGIN USERS
+
+So let's head back to our views.py file and firstly we will import the django authentication system.
+
+     from django.contrib.auth import authenticate, login, logout
+
+After we add this, we want the ability for django to flash up little messages on the screen. So when somebody logs in, we want to flash up a little message like ' You have successfully logged in.' and the same for log out and register. So when will import this also
+
+     from django.contrib import messages
+
+So we have already got a superuser, we don't need to register this again. So now what we want is, we want the users to login from the homepage not from the backend like we did when we setup the superuser.
+
+So what we need here is a couple of new views, so I am gonna define a view for the login which is login_user and for now we are just gonna say 'pass' 
+
+    def login_user(request):
+        pass
+
+    def logout_user(request):
+        pass
+
+We have got these views but we also need url because we had discussed that it is always a three step process. So we will create a url for both of these.
+
+    path('login/', views.login_user, name='login'),
+    path('logout/', views.logout_user, name='logout'),
+
+The reason why we are calling these login_user & logout_user and not the login & logout because we have imported login & logout which are function that will run, so our views cannot be named these because it will be a matter of conflict.
+
+So we have created this login_user view/function and if you want a separate login page, you need that but we are just gonna add this to our homepage. So what we want to happen is if somebody comes to the homepage and if they are not already logged in, we will flash up a form which says 'login' and if they are logged in, we just wanna show the CRM but we do not want to show this if you are not logged in, so we will do this all on the homepage.
+
+So before working with the home view, let's head to home.html and add a form just to see what we are looking at here. So we will center this form in the middle of the screen and for that we will use this div which is completely bootstrap.
+
+    <div class="col-md-6 offset-md-3">
+
+    </div>
+
+Wrap the sample text that we had written in this.
+And for now we will comment the login_user url because we have removed the login_user view as we will use in with the home view.
+
+Now let's start building the form, so there are couple of ways to create forms in django, we can use the forms.py file and we can also handcode it. And we will handcode this for now. Now we will get rid of the sample text and create a form in there.
+
+So this form will be a POST method form and the action will send it to home and in that first we will add the csrf token and for creating the actual form we will use the bootstrap again and get a form from there.
+
+Now we will do some modifications in the form as per the requirements.
+
+We need these fields (username and password) to be required, so we will just add 'required' in the input tag.
+
+So we have created this form but it doesn't do anything and we want to show only when the user is not logged in. So how do we determine if a user is logged in or not. For this, we will add this a tag an wrap this inside of that. So basically it will be like, if you are logged in, it will show a sample text ( for now ) and if you are not then it will show this form.
+
+Now if we go and reload in the browser, you will not see anything but if you go to the admin page, you login and then come back here again and you will see that there is no login form.
 
 
 
