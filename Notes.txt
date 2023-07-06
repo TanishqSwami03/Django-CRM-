@@ -195,6 +195,19 @@ So we have created this form but it doesn't do anything and we want to show only
 
 Now if we go and reload in the browser, you will not see anything but if you go to the admin page, you login and then come back here again and you will see that there is no login form.
 
+For now it just shows the form, doesn't do anything but we will fix this.
+
+So for this, head back to the views.py file and let's write some logic in the home view.
+
+Firstly we will check if the person is logging in, so if the person is logging in, they are POSTing otherwise they are just going to the webpage and in that case they are just GETting ( getting the request ).
+
+So we will check if the request method is POST and if that is, they are filling out the form. So we wil just grab whatever they submit in the form. 
+
+We have only two things to take which is username and the password. So to get the password, we will create a variable called as username which will take the username and we can call the username by the name because we have set the name in the input tag and we will do the same for the password also. So what this will do is, it will check the POST request for the username and save it in the username variable and password in the password variable.
+
+So now as we have their username and the password. After this, we will again do some login and check if the user who is trying to log in is real or not i.e, their username and password are correct or not.
+For this we will create a variable called user and in there, we will use the authenticate method and in that, we will pass the request, set the username to the username and the password to the password. 
+
 
 
 
