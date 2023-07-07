@@ -194,9 +194,31 @@ We need these fields (username and password) to be required, so we will just add
 So we have created this form but it doesn't do anything and we want to show only when the user is not logged in. So how do we determine if a user is logged in or not. For this, we will add this a tag an wrap this inside of that. So basically it will be like, if you are logged in, it will show a sample text ( for now ) and if you are not then it will show this form.
 
 Now if we go and reload in the browser, you will not see anything but if you go to the admin page, you login and then come back here again and you will see that there is no login form.
-<<<<<<< HEAD
 
 For now it just shows the form, doesn't do anything but we will fix this.
+
+
+    {% if user.is_authenticated %}
+
+    <h1>Hello World</h1>
+
+    {% else %}
+
+    <h1>Login</h1>
+    <br>
+    <form method="POST" action="{% url 'home' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+            <input type="text" class="form-control" name="username" placeholder="Username" required>
+        </div>
+        <div class="mb-3">
+            <input type="password" class="form-control" name="password" placeholder="Password" required>
+        </div>
+        <br>
+        <button type="submit" class="btn btn-secondary">Login</button>
+    </form>
+
+    {% endif %}
 
 So for this, head back to the views.py file and let's write some logic in the home view.
 
@@ -208,10 +230,89 @@ We have only two things to take which is username and the password. So to get th
 
 So now as we have their username and the password. After this, we will again do some login and check if the user who is trying to log in is real or not i.e, their username and password are correct or not.
 For this we will create a variable called user and in there, we will use the authenticate method and in that, we will pass the request, set the username to the username and the password to the password. 
-=======
->>>>>>> df6d850ebfdbf10ad7cf0837f8ea99d75d24f0ed
+
+Now let's run some logic and check if everything looks good. And now if you everything goes fine, then they will be just logged in and then we will just send a success message and then we will simply redirect them to the homepage ( import the redirect first ) and in the else which is when an error occurs, we will show a message.
+
+And if they are not POSTing, we will send them back to the homepage.
+
+    def home(request):
+    # Check to see if logging in
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        
+        # Authenticate
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success("You are successfully logged in.")
+            return redirect('home')
+        else:
+            messages.error(request,"There was an error logging in, please login again.")
+            return redirect('home')
+        
+    else:
+        return render(request, 'home.html', {})
+
+So now if we enter some shit in login form, we are supposed to get an error but we will not get any error for now because we need to add this in our base.html file. So head back to our base.html file and write some logic for showing the messages.
+
+The logic is, check for the messages and if there are then show them.
+    
+    {% if messages %}
+
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+
+     {% endif %}
 
 
+These messages does not look good on the homepage, we want to format this. Let's head back over to the bootstrap and we will go to componenets -> alerts and from there let's copy the required code for the alert. We will put it where we have printed the message and then we will remove the prewritten message from the copied code and paste out message. So now our message will come with the styling.
+
+So now we have completed the login process.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+Let's now start working on the logout.
+
+So firstly, we will go to the urls file and uncomment the logout path but not the login path because we are not creating the separate page for that.
+
+Now let's head back over to the views and start working on the logout view.
+Building logout is a lot easier than the logout page and to do that, we will simply call the logout function that we had previously imported and then pass in the request.
+
+Now that's all we really need but we should probably make this look nicer. So let's give this a little message.
+
+    def logout_user(request):
+         logout(request)
+         messages.success(request, "You have been logged out !!")
+         return redirect('home')
+
+Now we need to add the link for this in the navbar, so let's head over to this.
+We only want the logout link to appear, if a user is logged in.
+
+So we will apply some logic in the link just like,
+
+    {% if user.is_authenticated %}
+           <li class="nav-item">
+               <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+           </li>
+    {% else %}
+           <li class="nav-item">
+                <a class="nav-link" href="{% url 'home' %}">Login</a>
+           </li>
+     {% endif %}
 
 
+If a user is logged in, it will show a logout link and it will point to the logout and if the user is not logged in, then it will show the login link and it will point to the home page, then the home page login will be applied.
 
+Now the logout is done, we will now move on to register.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+Registering is a little bit more difficult and we are gonna use a django form to handle that for us.
+With logging in, we built the form ourselves by hand and it is fine when it is basic like the login but the registration form is gonna be more complicated because we wanna be able to do some logic things such as if they type in the password that doesn't follow the password rules, we need to make sure of that. We will make the users enter the password twice when they are registering. So the user enters the password then he needs to enter the password again just to make sure that the two matches. So that is a bit more complicated that the simple login form.
+
+So we are gonna create a django form  for that and it will take care of all for us.
+This is gonna be more copying and pasting because it is a lot of code.
+
+So let's start doing that.
