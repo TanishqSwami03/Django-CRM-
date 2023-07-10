@@ -316,3 +316,167 @@ So we are gonna create a django form  for that and it will take care of all for 
 This is gonna be more copying and pasting because it is a lot of code.
 
 So let's start doing that.
+
+You may not want to build this registration thing if you do not want the project to be public. You can simply go to the admin panel and add users manually from there.
+But if you want people to sign up on there own then you have to build the registration form.
+
+So let's head over to our page and create our registration page.
+
+Let's create the url first.
+
+    path('register/', views.register_user, name='register'),
+
+Next head back to the views.py file and create a view for the registration (register_user) and we will render the register page whenever someone hits this url.
+
+Now head over to the templates directory and create a file named register.html.
+And in there, firstly extend the base.html and then create a block content. 
+We will also add a link to this in the navbar.
+
+So if a user is authenticated which means the user is already logged in then we do not want him to register, so this should go in the else block and it will point to the register page.
+
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'register' %}">Register</a>
+    </li>
+
+
+Now as we have discussed before, we will be using the django forms for this, we will not be handcoding this.
+So in our app's base directory, we will create a file named forms.py and in this we need to import a few things which includes the UserCreationForm (it helps us create users), the user model and the form.
+
+    from django.contrib.auth.forms import UserCreationForm
+    from django.contrib.auth.models import User
+    from django import forms
+
+
+and in this only create a class named SignUpForm which will inherit from the UserCreationForm. We can use this form directly but we will modify it a little bit.
+
+So what we want is to grab is people's first name, last name and their email address.
+So let's define the variables for all these three. We also want username and password but we will do it separately.
+
+We will define an EmailField() for the email and CharField() for first_name and last_name. In these, we are gonna give a label of nothing because we are gonna use the placeholder tags.
+And in the email, we are gonna give this a widget of text input and that will basically say that the form field shows up on the screen is a text input screen ( just a textbox basically) and in this TextInput() we are gonna pass the attributes ( attr ) and this will allow us to pass different attributes on the page to style our form.
+We are gonna be using bootstrap to style our forms and bootstrap requires a class of form control, so we can designate that right here.
+
+So we will declare the class as form control inside of the attributes dictionary and after that we will declare the placeholder.
+
+And in the first name after the label, we are gonna give the max_length of 100, and then  copy paste the widget section from the email but change the placeholder.
+Now repeat the same thing for the last_name variable.
+
+Now all this looks good but we will also give this a meta class and in there we will specify the model which is the user model and the fields also which are these three fields, we also wanna designate the username, password 1 and password 2
+
+    class SignUpForm(UserCreationForm):
+        email = forms.EmailField(label="", widget = forms.TextInput(attrs={'class':'form-control', 'placeholder':'Email Address'}))
+        first_name = forms.CharField(label="", max_length=100, widget = forms.TextInput(attrs={'class':'form-control', 'placeholder':'First Name'}))
+        last_name = forms.CharField(label="", max_length=100, widget = forms.TextInput(attrs={'class':'form-control', 'placeholder':'Last Name'}))
+
+        class Meta:
+            model = User
+            fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
+
+Django expect the password1 and password2 to be same.
+
+So we are half way done now.
+
+Now we need to copy and paste a few more things and we will create an init function, in there we will do the same things we did above for our username, password1 and our password2 and that just allows us to add whatever we want. ( copy and paste this section from the github link ).
+
+As we have got this stuff, we need to put this stuff on the webpage.
+
+So now head back over to our views.py file, and we need to import that form that we have created.
+
+Firstly import the form.
+
+    from .forms import SignUpForm
+
+Now go over to the RegisterUser() view. So like our login, when somebody fills out the form, they are going to be POSTing it so just copy paste this and in there, we will create a variable as form and pass in the SignUpForm() and then just pass the POST request. So we are basically saying that whatever the user fills out in the form, just send it over to our SignUpForm and we will save it in our form variable. 
+Now after this, first we need to check if what the user typed in is valid. So if the form is valid, just save it.
+
+So now that the form has been saved, the person who registers for the form is registering because they want to use the site. So let's log them in right now.
+So let's grab their username and we will use the cleaned_data method from the form to get the username entered in the form and we also want the same for the passwiord also but we will extract the password1 because on the page it will be password1.
+
+So once we have their username and password, we can try to authenticate them.
+
+So once this authentication is done, we can log them in. And then at last, we will give a success message.
+Then we have to redirect them somewhere, so we will send them to the home page.
+
+
+    def register_user(request):
+        if request.method == 'POST':
+            form = SignUpForm(request.POST)
+            if form.is_valid():
+                form.save()
+                # authenticate and login
+                username = form.cleaned_data['username']
+                password = form.cleaned_data['password1']
+                user = authenticate(username=username, password = password)
+                login(request, user)
+                messages.success(request, "You have successfully registered !!")
+                return redirect('home')
+     return render(request, 'register.html', {})
+
+So again, it is if they are filling out the form, if they are POSTing and if they are not it means they are going to the website.
+So we will do that in the else condition, we still need that form but this time we will not pass the POST request because they haven't filled out the form. They are just going to the page, they want to fill the form but they have not done yet. So we do need to pass this form to the page, so we could shift this return statement inside of the else condition and pass in the form in the context dictionary.
+
+    def register_user(request):
+        if request.method == 'POST':
+            form = SignUpForm(request.POST)
+            if form.is_valid():
+                form.save()
+                # authenticate and login
+                username = form.cleaned_data['username']
+                password = form.cleaned_data['password1']
+                user = authenticate(username=username, password = password)
+                login(request, user)
+                messages.success(request, "You have successfully registered !!")
+                return redirect('home')
+        else:
+            form = SignUpForm()
+            return render(request, 'register.html', {'form':form})
+
+        return render(request, 'register.html', {'form':form})
+
+
+
+You can see the difference in the code.
+
+So this will pass the form into the webpage (our register.html page ) and then we can do something with it.
+
+Let's head backover to our regsiter.html file and in here firstly we will grab the div that we have added on the homepage and we have to grab some more items from the homepage.
+
+After all this, we need to add the actual form and to do that, we will just type form.as_p in the tag
+
+       {{ form.as_p }}
+
+Now if we refresh, we can see the register form.
+
+Now we will add some more code above the tag for the form errors.
+
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+         Your form has some errors.
+         {% for field in forms %}
+         {% if fields.errors %}
+         {{field.errors}}
+         {% endif %}
+         {% endfor %}
+         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+     </div>
+
+So if your form has errors, it says "Your form has errors" and then it loops through the errors and it quits out whatever the error is.
+
+NOTE :- This is case-sensitive so you have to write the first letter in capital.
+
+
+So whenever you have any error, you can see that because this above code is in action.
+
+This is it for the registration section. We can now move ahead to the next section.
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
