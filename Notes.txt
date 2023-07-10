@@ -83,6 +83,7 @@ We can now delete the mydb.py file if we want, we don't need it anymore.
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 INITIAL APP BUILDING
+--------------------
 
 Now we will head on to building out our app.
 
@@ -146,6 +147,7 @@ So I think we will look out for logging in and logging out first and then we wil
 ----------------------------------------------------------------------------------------------------------------------------------
 
 DJANGO LOGIN USERS
+------------------
 
 So let's head back to our views.py file and firstly we will import the django authentication system.
 
@@ -273,6 +275,10 @@ So now we have completed the login process.
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
 
+LOGOUT
+------
+
+
 Let's now start working on the logout.
 
 So firstly, we will go to the urls file and uncomment the logout path but not the login path because we are not creating the separate page for that.
@@ -308,6 +314,9 @@ If a user is logged in, it will show a logout link and it will point to the logo
 Now the logout is done, we will now move on to register.
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+REGISTRATION
+------------
 
 Registering is a little bit more difficult and we are gonna use a django form to handle that for us.
 With logging in, we built the form ourselves by hand and it is fine when it is basic like the login but the registration form is gonna be more complicated because we wanna be able to do some logic things such as if they type in the password that doesn't follow the password rules, we need to make sure of that. We will make the users enter the password twice when they are registering. So the user enters the password then he needs to enter the password again just to make sure that the two matches. So that is a bit more complicated that the simple login form.
@@ -471,10 +480,57 @@ This is it for the registration section. We can now move ahead to the next secti
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+DJANGO DATABASE MODEL
+---------------------
 
+So to setup the database stuff, the first thing we need are models. Let's head over to our models.py file. It does not matter what database you use, the code here will always be the same. This is an absolute python class, they will then create a way and extract that code for us on the backend. So whatever database you use, it will convert this python code into the code needed for your database. AND THAT IS A GREAT THING ABOUT USING DJANGO. So let's just dive in and create our class.
 
+We will create a class and we will call this Record ( We are saving Records but we will name it Record, django will automatically pluralize it for us. ) and in there we will just define the things we want.
 
+The first thing we want is a created_at field and this is just gonna add a little timestamp for us. For this, we will use the DateTimeField attribute and as a parameter, we will set the auto_now_add to True.
 
+    created_at = models.DateTimeField(auto_now_add=True)
+
+So anytime we create a record, django will automatically slap a timestamp on it of when it was created.
+
+Now let's designate what we want to save. So we definitely wanna save first_name, last_name, email, phone, address, city, state, zipcode.
+
+The first_name will take a CharField() attribute and in there we will set the max_length to 50 and  we will copy this to last_name. All of them will take the max_length, so we will give them accordingly.
+
+NOTE :- Don't use max_length() with the IntegerField() and django also assigns an id to each record.
+
+After this, we will define the self function and then here we can return what we want to show on the screen if we just access one of these records.
+So in the return, we will create an f string and in there, we will pass in the first_name and last_name.
+
+    def __str__(self):
+        return(f"{self.first_name} {self.last_name}")
+
+So if you just call one of these records in the admin area or on the webpage, it will return the first name and the last name.
+
+So this is all you have to do to create a database model in django. You don't need to know any sql, django will take care of that. But to do that, we need to make a migration and push that into our database. 
+
+     python manage.py makemigrations
+     python manage.py migrate
+
+Now we can go to the workbench and see that we have a table named website_record ( because we have named it record ).  
+
+Now to use this we can go to the admin section but for now you will not see the record there, we have to add it. So for that we have to go to the admin.py and in here, we just have to import the model that we have just created.
+
+    from .models import Record
+
+and now we need to register this on the admin site.
+
+    admin.site.register(Record)
+
+Now if we go back again to the admin panel, we can see the changes.
+
+Now as we can see, it is written as Records not Record, it automatically pluralized it as we have discussed earlier that django does this for us. If we have named it Records then in here, it will be Recordss which will not look good. So we named it Record.
+
+Now if we hit on that record, we can manually add some records just to get something to work on.
+
+Pretty soon we will add a form on the webpage so that the users can add them from there.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
