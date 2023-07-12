@@ -532,6 +532,127 @@ Pretty soon we will add a form on the webpage so that the users can add them fro
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 
+VIEW RECORDS ON THE WEBSITE
+---------------------------
+
+Now we want to view these things from the website. We want this to show up when someone logs in and not when someone is not logged in.
+Now let's head over to our code and start building this out.
+
+Let's go to our views.py file and play with the home view.
+
+So first we need to import that model at the top. So right at the top of our home view, let's grab all the records that are in the table right now.
+So we will create a variable called records and this will be set to grab all the records.
+
+    records = Record.objects.all()
+
+and now we can pass that in to our webpage. So now in the context dictionary below, we will pass this.
+
+Now head over to our home.html file. So in the authenticated section where we have written Hello World, we will now pass the records.
+
+Firstly we will check if there are records and then we will loop through them and put them on the screen.
+
+    <h1>Records</h1>
+    {% if records %}
+    {% for record in records %}
+    {{record}}
+    <br>
+    {% endfor %}
+    {% endif %}
+
+After this we will see the names on the webpage, but why only the names. Remember in the models.py file where we have defined the model, there in the self function, we have returned only the first and the last name. So it will show only the first and the last name if we just call the record.
+So if we call a record, it is just gonna show the first name and the last name. All the rest of the stuff is in there but we just have to pull it out explicitly which is we want to do. We don't want to spit out everything.
+
+So to grab each specific item, we would just put a dot (.) and call whatever we want from the database. So let's do that
+
+    {% if user.is_authenticated %}
+
+    <h1>Records</h1>
+    {% if records %}
+    {% for record in records %}
+    {{record.first_name}}
+    {{record.last_name}}
+    {{record.email}}
+    {{record.phone}}
+    {{record.address}}
+    {{record.city}}
+    {{record.state}}
+    {{record.created_at}}
+    {{record.id}}
+    <br>
+    {% endfor %}
+    {% endif %}
+
+
+It is hard to read so what we want here is a table that looks nice and we can click and do things.
+
+So let's look at that now.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+BOOTSTRAP Table
+---------------
+
+Now to do this, we will head over to the bootstrap and copy from there.
+
+Go to the home.html and paste the table and do some modification.
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Mobile No.</th>
+            <th scope="col">Address</th>
+            <th scope="col">City</th>
+            <th scope="col">State</th>
+            <th scope="col">Created At</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if records %}
+        {% for record in records %}
+
+        <tr>
+            <th scope="row">{{record.id}}</th>
+            <td>{{record.first_name}} {{record.last_name}}</td>
+            <td>{{record.email}}</td>
+            <td>{{record.phone}}</td>
+            <td>{{record.address}}</td>
+            <td>{{record.city}}</td>
+            <td>{{record.state}}</td>
+            <td>{{record.created_at}}</td>
+        </tr>
+
+        {% endfor %}
+        {% endif %}
+    </tbody>
+</table>
+
+So we will loop through every record and print that out.
+
+And now we don't want to center this out, so we will remove the div and we will wrap it around the else because we want it to work with login/register section.
+
+Now we will move ahead to modifying this.
+
+From the bootstrap's tables page, we will add some styling to this paper as per our liking.
+
+After doing this, we need to do a few more things like adding a record from the homepage, click on one of these & go somewhere, edit the records.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
