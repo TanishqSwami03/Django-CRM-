@@ -682,6 +682,7 @@ We changed the id with this
     <th scope="row"><a href="{% url 'record' record.id %}">{{record.id}}</a></th>
 
 Now the ids are clickable and when you click on those, it will take you to the url but nothing will show up on the page. So we need to do something for that.
+(NOTE :- Later we have made the first and last name clickable instead of the id because it is more practical.)
 
 As we can see in the view, we have passed the user_record in the context dictionary so we can access it in the record.html tempalate.
 So if we do that like {{user_record}}, we will only see the first and the last name ( reason mentioned earlier ). So we will do the copy and paste from the home.html
@@ -709,16 +710,115 @@ Now after this, we also want a back button, so we will add that also.
 Now the step of putting things on the screen is complete.
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+DELETE RECORD 
+-------------
+
+Now we want the delete functionality.
+So we will create another button as delete and make the style danger.
+
+Now we will move ahead to make it work.
+
+So we will do the first thing which is creating a url.
+    
+    path('delete_record/<int:pk>', views.delete_record, name='delete_record'),
+
+Now we will create a view for this.
+
+def delete_record(request, pk):
+    if request.user.is_authenticated:
+        delete_record = Record.objects.get(id=pk)
+        delete_record.delete()
+        messages.success(request,"Record deleted successfully !!")
+        return redirect('home')
+    else:
+        messages.success(request, "You must be logged in to delete a record !!")
+        return redirect('home')
 
 
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+ADD RECORDS
+-----------
+
+The next functionality we will be adding is to add the records from the homepage.
+
+And the first thing is obviously adding a url for this.
+
+    path('add_record/', views.add_record, name='add_record'),
+
+Now let's head over to our views and create a view for this.
+
+So first we will put the return statement which will point to the add_record.html. Now create a new template with the same name and obviously do some wrapping that we always do.
+And now let's add a sample text for testing.
+
+Then we will add this to our navbar also.
+
+Now let's build out this add record page.
+So we will put the same div that we were using everywhere and we will also take the form from the home.html page.
+
+So let's just create a form for this, firstly add the form tag here, {{form.as_p}}, and then head over to the forms.py file 
+
+Create a class named AddRecordForm and this is gonna take forms.ModelForm and a ModelForm is just what it sounds like, it takes a form and adds it to the model, our model is the record model, so we need to import that to use that in the file.
+
+     from .models import Record
+
+So in the class, first we will create variables for whatever we want to create a record ( basically all the things from the Record model except the id and the created_at, django will do that for us. ) 
+
+We will also set requird for all of these.
+After doing all the things in these, we need to setup our class for meta.
+
+So now as we have this add record form, we will import this in our view file.
+
+So let's create a form variable which will be equated to the AddRecordForm and it will take the request and if the request is POST, proceed, otherwise, go back to the homepage.
+
+Then we will check if the user is authenticated, check the method, check if the form is valid. If it is then save the form and show up a success message and then simply return to the homepage and in the else of the form method, we will return to the add_record.html file and in the context dictionary, we will pass the form because if they are not filling out the form, it means that they want to fill out the form, so we will just show them the form.
+
+def add_record(request):
+    form = AddRecordForm(request.POST or None)
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            if form.is_valid:
+                add_record = form.save()
+                messages.success(request,"Record Added Successfully !!")
+                return redirect('home')
+        return render(request, 'add_record.html',{'form':form})
+    else:
+        messages.success(request,"You must be logged in to add the record !!")
+        return render('home')
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+UPDATE RECORDS
+--------------
+
+The next functionality, we are gonna add is the update functionality.
+
+So in the record page, let's create another button which is the update button which will point to the update_record.
+
+So do the url thing and then in the views file create a view which will first check if the user is authenticated and if it is, let's grab our current record.
+
+And after that take the AddRecordForm line of code that we have used in the other view and pass this current record as the instance as the second parameter.
+So what it will do is, when we click on the update button, it will take that same AddRecordForm but this time it will be already filled with the current data. And then after that, we will just check if the form is valid and if it is then simply save the form and at last, we can simpy show up a small message. Otherwise, let's just show them the page.
+
+def update_record(request, pk):
+    if request.user.is_authenticated:
+        current_record = Record.objects.get(id=pk)
+        form = AddRecordForm(request.POST or None, instance = current_record)
+        if form.is_valid:
+            form.save()
+            messages.success(request, "The record is successfully updated !!")
+            return redirect('home')
+        return render(request, 'update_record.html',{'form':form})
+    else:
+        messages.success(request,"You must be logged in to update the record !!")
+        return redirect('home')
+
+Now we need this update_record.html page, so go to the templates folder and create one. Then firstly do the basics
 
 
+And then we can copy some stuff from the add_record.html as it is almost going to be same.
 
+We are now done with all this.
 
-
-
-
-
+----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
