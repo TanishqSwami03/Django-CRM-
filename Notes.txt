@@ -640,6 +640,77 @@ From the bootstrap's tables page, we will add some styling to this paper as per 
 After doing this, we need to do a few more things like adding a record from the homepage, click on one of these & go somewhere, edit the records.
 
 -------------------------------------------------------------------------------------------------------------------------------------------------
+INDIVIDUAL RECORDS
+------------------
+
+So now let's make them clickable and then going to separate webpage where we can view just that record.
+
+So head back to the urls file and create a new url for that and we will call this a record and now we will the pass integer as a prmimary key and we will point to the user_record view.
+
+pk here is the primary key which is used to point a particular record. Whenever a url comes with an integer at the end, it will match the primary key and show that to us if it matches.
+
+Now create a view named user_record and pass in the request and the pk as the parameters and in that, firstly we do not want everyone in the world to see the records, we only want the authenticated users to see the record, so we will user an if condition.
+
+so if a user is authenticated, he can lookup to records. So for doing this, we will create a variable and in there, we will get the record as per the id.
+
+    user_record = Record.objects.get(id=pk)
+
+So our pk is the number that is passed in with our request and the id is our primary key in the database.
+Here we have used the get() and not the all() because we do not want all the records 
+Then we will return them to the record.html and pass in the user_record into the context dictionary.
+
+So that is if a user is authenticated but if they are not then we will show up a message and return them to the home.
+
+    def user_record(request, pk):
+    if request.user.is_authenticated:
+        # Look up their record.
+        user_record = Record.objects.get(id=pk)
+        return render(request, 'record.html',{'user_record':user_record})
+    else:
+        messages.success(request, "You must be logged in to view that page.")
+        return redirect('home')
+
+
+Now we need to create this record.html file, so go to templates and create a file.
+Then after this, extend the base.html and wrap the content and let's give a sample text to make sure it is working.
+
+Now we wanna make these ids clickable with a link.
+So go to the home page, you can also do it for the first name last name but we are gonna do it for the id only.
+
+We changed the id with this
+    
+    <th scope="row"><a href="{% url 'record' record.id %}">{{record.id}}</a></th>
+
+Now the ids are clickable and when you click on those, it will take you to the url but nothing will show up on the page. So we need to do something for that.
+
+As we can see in the view, we have passed the user_record in the context dictionary so we can access it in the record.html tempalate.
+So if we do that like {{user_record}}, we will only see the first and the last name ( reason mentioned earlier ). So we will do the copy and paste from the home.html
+
+
+    {{user_record.id}}
+    {{user_record.first_name}} {{user_record.last_name}}
+    {{user_record.email}}
+    {{user_record.phone}}
+    {{user_record.address}}
+    {{user_record.city}}
+    {{user_record.state}}
+    {{user_record.created_at}}
+
+This doesn't look good on the homepage, so for now, we are just adding some line breaks in between.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Bootstrap Card
+--------------
+
+So to style this, we are gonna head back over to the bootstrap, and let's grab a card from there and put it in the template and then put the things on place in the card.
+
+Now after this, we also want a back button, so we will add that also.
+
+Now the step of putting things on the screen is complete.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 
 
