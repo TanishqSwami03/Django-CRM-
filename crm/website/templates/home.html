@@ -5,9 +5,9 @@
 
 {% if user.is_authenticated %}
 
-<table class="table table-dark table-striped table-hover table-bordered border-primary-subtle">
+<table class="table table-primary table-hover table-striped-columns table-bordered border-primary-subtle">
     <thead>
-        <tr>
+        <tr class="table-active">
             <th scope="col">ID</th>
             <th scope="col">Name</th>
             <th scope="col">Email</th>
@@ -18,7 +18,7 @@
             <th scope="col">Created At</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="table-group-divider">
         {% if records %}
         {% for record in records %}
 

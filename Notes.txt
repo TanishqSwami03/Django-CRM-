@@ -24,9 +24,9 @@ So in the main project file, we can create a file named mydb.py ( there are othe
 
 In the mydb.py file, firstly import the mysql connector as
   
-        import mysql-connector
+        import mysql.connector
 
-then we need to create a database connection and for that we will create a variable called as dataBase and we will use connect function in in and inside of that, we will mention host, user and password ( as a convention passwd is used for password ).
+then we need to create a database connection and for that we will create a variable called as dataBase and we will use connect function in it and inside of that, we will mention host, user and password ( as a convention passwd is used for password ).
 
 
     dataBase = mysql.connector.connect(
@@ -819,10 +819,20 @@ And then we can copy some stuff from the add_record.html as it is almost going t
 We are now done with all this.
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+MODIFICATION OR UPDATIONS AFTER THE INITIAL COMPLETION.
 
+1. To add a custom css file, firstly create a static folder inside the base directory and then add all your static files (css, js, jquery etc. ) there and then just add this static folder in the settings.py file.
 
+    STATICFILES_DIRS = [
+        BASE_DIR, "static"
+    ]
 
+Then in the base.html file (or any template ) just link this css file.
 
+    <link rel="stylesheet" href="/static/style.css">
+
+2. 
 
 
 

@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div class="card border-info">
+<div class="card border-info border-info-subtle">
     <h5 class="card-header">
         {{user_record.first_name}} {{user_record.last_name}}
     </h5>
@@ -37,7 +37,7 @@
 
 <br>
 
-<div>
+<div class="record-buttons">
     <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
     <a href="{% url 'update_record' user_record.id %}" class="btn btn-info">Update</a>
     <a href="{% url 'delete_record' user_record.id %}" class="btn btn-danger">Delete</a>
