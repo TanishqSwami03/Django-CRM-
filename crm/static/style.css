@@ -1,0 +1,23 @@
+body{
+    background-color: #81acee;
+}
+
+@media (min-width: 576px){
+.container{
+    max-width: 737px;
+}
+}
+
+/* record.html */
+.card{
+    background-color: #cfe2ff;
+}
+
+.record-buttons{
+    text-align: center;
+    
+}
+
+.record-buttons a {
+    margin: 5px;
+}
